@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Data Cleaner</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+        background: #f5f7fa;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px 20px;
+    }
+    
+    .container {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        width: 100%;
+        max-width: 1000px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #2c3e50;
+    }
+    
+    .header h1 {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+    
+    .header p {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+    }
+    
+    .upload-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 30px;
+        text-align: center;
+        border: 2px dashed #dee2e6;
+        transition: all 0.3s ease;
+    }
+    
+    .upload-label {
+        display: block;
+        padding: 12px 20px;
+        background: #4e73df;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 0 auto 15px;
+        width: fit-content;
+        transition: all 0.3s ease;
+    }
+    
+    .upload-label:hover {
+        background: #3a56c4;
+    }
+    
+    .file-info {
+        color: #5a5c69;
+        margin-top: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .file-supported {
+        color: #858796;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+    
+    .data-preview {
+        background: #f8f9fc;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        max-height: 400px;
+        overflow: auto;
+        border: 1px solid #e3e6f0;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .data-table th {
+        background: #4e73df;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+        position: sticky;
+        top: 0;
+    }
+    
+    .data-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #e3e6f0;
+    }
+    
+    .data-table tr:nth-child(even) {
+        background-color: #f8f9fc;
+    }
+    
+    .data-table tr:hover {
+        background-color: #eaecf4;
+    }
+    
+    .actions-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .action-card {
+        background: #f8f9fc;
+        border-radius: 10px;
+        padding: 20px;
+        border: 1px solid #e3e6f0;
+    }
+    
+    .action-card h3 {
+        margin-bottom: 15px;
+        color: #4e73df;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .action-card button {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        background: #4e73df;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    
+    .action-card button:hover {
+        background: #3a56c4;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #5a5c69;
+    }
+    
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #d1d3e2;
+        background: white;
+        color: #6e707e;
+    }
+    
+    .download-options {
+        background: #f8f9fc;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        border: 1px solid #e3e6f0;
+    }
+    
+    .download-options h3 {
+        margin-bottom: 15px;
+        color: #4e73df;
+    }
+    
+    .download-btn {
+        padding: 12px 25px;
+        border-radius: 8px;
+        border: none;
+        background: #1cc88a;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+    }
+    
+    .download-btn:hover {
+        background: #17a673;
+    }
+    
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        background: #1cc88a;
+        color: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .notification.error {
+        background: #e74a3b;
+    }
+    
+    .notification.show {
+        transform: translateX(0);
+    }
+    
+    @media (max-width: 768px) {
+        .actions-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .data-preview {
+            overflow-x: auto;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-broom"></i> Data Cleaner</h1>
+        <p>Upload, clean, and transform your data</p>
+    </div>
+    
+    <div class="upload-container">
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" hidden>
+        <label for="fileInput" class="upload-label">
+            <i class="fas fa-cloud-upload-alt"></i> Choose Data File
+        </label>
+        <div class="file-info" id="fileInfo">No file selected</div>
+        <div class="file-supported">Supported formats: CSV, XLSX, XLS, JSON</div>
+    </div>
+    
+    <div class="data-preview" id="dataPreview">
+        <p style="text-align: center; color: #858796;">Your data will appear here after upload</p>
+    </div>
+    
+    <div class="actions-container" id="actions" style="display: none;">
+        <div class="action-card">
+            <h3><i class="fas fa-trash-alt"></i> Remove Empty Rows</h3>
+            <p>Remove all rows where every cell is empty or null</p>
+            <button onclick="removeEmptyRows()">Remove Empty Rows</button>
+        </div>
+        
+        <div class="action-card">
+            <h3><i class="fas fa-copy"></i> Remove Duplicates</h3>
+            <p>Remove duplicate rows from your dataset</p>
+            <button onclick="removeDuplicates()">Remove Duplicates</button>
+        </div>
+        
+        <div class="action-card">
+            <h3><i class="fas fa-exchange-alt"></i> Replace Null Values</h3>
+            <p>Replace empty or null values with custom text</p>
+            <div class="form-group">
+                <label for="nullValue">Replacement Value:</label>
+                <input type="text" id="nullValue" placeholder="Enter replacement value">
+            </div>
+            <div class="form-group">
+                <label for="columnSelect">Select Column:</label>
+                <select id="columnSelect"></select>
+            </div>
+            <button onclick="replaceNulls()">Replace Null Values</button>
+        </div>
+    </div>
+    
+    <div class="download-options">
+        <h3><i class="fas fa-download"></i> Download Cleaned Data</h3>
+        <div class="form-group" style="max-width: 200px; margin: 0 auto;">
+            <label for="fileFormat">Choose Format:</label>
+            <select id="fileFormat">
+                <option value="csv">CSV</option>
+                <option value="xlsx">Excel (.xlsx)</option>
+                <option value="json">JSON</option>
+            </select>
+        </div>
+        <button class="download-btn" onclick="downloadFile()">
+            <i class="fas fa-file-download"></i> Download
+        </button>
+    </div>
+</div>
+
+<div class="notification" id="notification">
+    <span id="notificationText"></span>
+</div>
+
+<script>
+let originalData = [];
+let cleanedData = [];
+let hasCleaned = false;
+let currentFileName = "";
+
+// File upload handling
+document.getElementById("fileInput").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    currentFileName = file.name;
+    document.getElementById("fileInfo").textContent = `Selected: ${file.name}`;
+    showNotification(`File "${file.name}" uploaded successfully`);
+    
+    const extension = file.name.split('.').pop().toLowerCase();
+    
+    if (extension === 'csv') {
+        parseCSV(file);
+    } else if (extension === 'json') {
+        parseJSON(file);
+    } else if (['xlsx', 'xls'].includes(extension)) {
+        parseExcel(file);
+    } else {
+        showNotification("Unsupported file format!", true);
+    }
+});
+
+// Parse CSV files
+function parseCSV(file) {
+    Papa.parse(file, {
+        complete: function(results) {
+            originalData = results.data;
+            cleanedData = JSON.parse(JSON.stringify(originalData));
+            displayTable(cleanedData);
+            setupColumnDropdown();
+            document.getElementById("actions").style.display = "grid";
+            
+            // Register upload in work history
+            registerUploadInWorkHistory(file.name, 'CSV');
+        },
+        header: false,
+        skipEmptyLines: true
+    });
+}
+
+// Parse JSON files
+function parseJSON(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const jsonData = JSON.parse(e.target.result);
+            
+            if (Array.isArray(jsonData) && jsonData.length > 0) {
+                // Get headers from object keys
+                const headers = Object.keys(jsonData[0]);
+                originalData = [headers];
+                
+                // Add data rows
+                jsonData.forEach(item => {
+                    const row = headers.map(header => item[header]);
+                    originalData.push(row);
+                });
+                
+                cleanedData = JSON.parse(JSON.stringify(originalData));
+                displayTable(cleanedData);
+                setupColumnDropdown();
+                document.getElementById("actions").style.display = "grid";
+                
+                // Register upload in work history
+                registerUploadInWorkHistory(file.name, 'JSON');
+            } else {
+                showNotification("Invalid JSON format. Please use an array of objects.", true);
+            }
+        } catch (error) {
+            showNotification("Error parsing JSON file: " + error.message, true);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Parse Excel files
+function parseExcel(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            
+            // Get first worksheet
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+            
+            // Convert to array of arrays
+            originalData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            cleanedData = JSON.parse(JSON.stringify(originalData));
+            
+            displayTable(cleanedData);
+            setupColumnDropdown();
+            document.getElementById("actions").style.display = "grid";
+            
+            // Register upload in work history
+            registerUploadInWorkHistory(file.name, 'Excel');
+        } catch (error) {
+            showNotification("Error parsing Excel file: " + error.message, true);
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+// Display data in a table
+function displayTable(data) {
+    if (data.length === 0) {
+        document.getElementById("dataPreview").innerHTML = 
+            "<p style='text-align: center; color: #858796;'>No data to display</p>";
+        return;
+    }
+    
+    let html = "<table class='data-table'>";
+    
+    // Create header row
+    html += "<tr>";
+    data[0].forEach(cell => {
+        html += `<th>${cell === undefined ? "" : cell}</th>`;
+    });
+    html += "</tr>";
+    
+    // Create data rows
+    for (let i = 1; i < data.length; i++) {
+        html += "<tr>";
+        data[i].forEach(cell => {
+            html += `<td>${cell === undefined ? "" : cell}</td>`;
+        });
+        html += "</tr>";
+    }
+    
+    html += "</table>";
+    document.getElementById("dataPreview").innerHTML = html;
+}
+
+// Setup column dropdown
+function setupColumnDropdown() {
+    const select = document.getElementById("columnSelect");
+    select.innerHTML = "";
+    
+    if (cleanedData.length > 0) {
+        cleanedData[0].forEach((header, index) => {
+            let option = document.createElement("option");
+            option.value = index;
+            option.textContent = header || `Column ${index + 1}`;
+            select.appendChild(option);
+        });
+    }
+}
+
+// Mark that cleaning has been performed
+function markCleaned() {
+    hasCleaned = true;
+    showNotification("Data cleaning applied successfully");
+}
+
+// Remove empty rows
+function removeEmptyRows() {
+    cleanedData = cleanedData.filter(row => !row.every(cell => 
+        cell === "" || cell == null || cell === undefined || String(cell).trim() === ""
+    ));
+    
+    markCleaned();
+    displayTable(cleanedData);
+}
+
+// Remove duplicate rows
+function removeDuplicates() {
+    let seen = new Set();
+    cleanedData = cleanedData.filter(row => {
+        let key = JSON.stringify(row);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+    
+    markCleaned();
+    displayTable(cleanedData);
+}
+
+// Replace null values
+function replaceNulls() {
+    let nullValue = document.getElementById("nullValue").value || "N/A";
+    let colIndex = parseInt(document.getElementById("columnSelect").value);
+
+    cleanedData = cleanedData.map((row, i) => {
+        if (i === 0) return row; // skip header
+        if (row[colIndex] === "" || row[colIndex] == null || row[colIndex] === undefined) {
+            row[colIndex] = nullValue;
+        }
+        return row;
+    });
+    
+    markCleaned();
+    displayTable(cleanedData);
+}
+
+// Register upload in work history
+function registerUploadInWorkHistory(fileName, fileType) {
+    // Get existing work history or initialize empty array
+    let workHistory = JSON.parse(localStorage.getItem('documentWorkHistory')) || [];
+    
+    // Create new history item
+    const historyItem = {
+        action: 'data_upload',
+        fileName: fileName,
+        fileType: fileType,
+        timestamp: new Date().toISOString(),
+        tool: 'Data Cleaner'
+    };
+    
+    // Add to history
+    workHistory.unshift(historyItem);
+    
+    // Keep only last 50 items
+    if (workHistory.length > 50) {
+        workHistory = workHistory.slice(0, 50);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('documentWorkHistory', JSON.stringify(workHistory));
+    
+    console.log('Upload registered in work history:', historyItem);
+}
+
+// Register download in work history
+function registerDownloadInWorkHistory(fileName, fileType, actionType) {
+    // Get existing work history or initialize empty array
+    let workHistory = JSON.parse(localStorage.getItem('documentWorkHistory')) || [];
+    
+    // Create new history item
+    const historyItem = {
+        action: actionType,
+        fileName: fileName,
+        fileType: fileType,
+        timestamp: new Date().toISOString(),
+        tool: 'Data Cleaner'
+    };
+    
+    // Add to history
+    workHistory.unshift(historyItem);
+    
+    // Keep only last 50 items
+    if (workHistory.length > 50) {
+        workHistory = workHistory.slice(0, 50);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('documentWorkHistory', JSON.stringify(workHistory));
+    
+    console.log('Download registered in work history:', historyItem);
+}
+
+// Download file
+function downloadFile() {
+    if (cleanedData.length === 0) {
+        showNotification("No data to download", true);
+        return;
+    }
+    
+    let format = document.getElementById("fileFormat").value;
+    let filename = "cleaned_data." + format;
+
+    // Register download in work history before proceeding
+    registerDownloadInWorkHistory(filename, format.toUpperCase(), 'data_export');
+
+    if (format === "csv") {
+        let csv = Papa.unparse(cleanedData);
+        let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        triggerDownload(blob, filename);
+    } 
+    else if (format === "xlsx") {
+        let ws = XLSX.utils.aoa_to_sheet(cleanedData);
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "CleanedData");
+        let wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        let blob = new Blob([wbout], { type: "application/octet-stream" });
+        triggerDownload(blob, filename);
+    } 
+    else if (format === "json") {
+        let headers = cleanedData[0];
+        let jsonData = cleanedData.slice(1).map(row => {
+            let obj = {};
+            headers.forEach((header, i) => {
+                obj[header] = row[i];
+            });
+            return obj;
+        });
+        let blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+        triggerDownload(blob, filename);
+    } 
+    else {
+        showNotification("Unsupported download format!", true);
+    }
+    
+    showNotification("File downloaded successfully");
+}
+
+// Trigger file download
+function triggerDownload(blob, filename) {
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Show notification
+function showNotification(message, isError = false) {
+    const notification = document.getElementById("notification");
+    const notificationText = document.getElementById("notificationText");
+    
+    notificationText.textContent = message;
+    notification.className = isError ? "notification error" : "notification";
+    
+    notification.classList.add("show");
+    
+    setTimeout(() => {
+        notification.classList.remove("show");
+    }, 3000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Work History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+        
+        .work-history {
+            margin-top: 30px;
+        }
+        
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e3e6f0;
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            background-color: #f8f9fc;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #4e73df;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: white;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+        }
+        
+        .history-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .history-content h4 {
+            margin-bottom: 5px;
+            color: #2c3e50;
+            word-break: break-word;
+        }
+        
+        .history-content p {
+            color: #5a5c69;
+            font-size: 0.95rem;
+        }
+        
+        .history-time {
+            color: #858796;
+            font-size: 0.85rem;
+            margin-left: 15px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #d1d3e2;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: #4e73df;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3a56c4;
+        }
+        
+        .btn-secondary {
+            background: #e74a3b;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #c0352a;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            background: #1cc88a;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.error {
+            background: #e74a3b;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .history-item {
+                flex-wrap: wrap;
+                padding: 15px;
+            }
+            
+            .history-time {
+                width: 100%;
+                margin-left: 70px;
+                margin-top: 8px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+                border-radius: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .history-item {
+                padding: 12px 10px;
+            }
+            
+            .history-icon {
+                width: 45px;
+                height: 45px;
+                margin-right: 15px;
+                font-size: 1.1rem;
+            }
+            
+            .history-content h4 {
+                font-size: 1rem;
+            }
+            
+            .history-content p {
+                font-size: 0.9rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            @media (max-width: 768px) {
+                .history-time {
+                    margin-left: 60px;
+                }
+            }
+        }
+        
+        .tool-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tool-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: #36b9cc;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .tool-btn:hover {
+            background: #2c9faf;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-history"></i> Document Work History</h1>
+            <p>Track all your document processing activities</p>
+        </div>
+        
+        <div class="tool-navigation">
+            <a href="caedata4.html" class="tool-btn">
+                <i class="fas fa-broom"></i> Data Cleaner
+            </a>
+            <a href="analyze5.html" class="tool-btn">
+                <i class="fas fa-chart-bar"></i> Data Visualizer
+            </a>
+        </div>
+        
+        <div class="work-history" id="workHistoryList">
+            <!-- Work history items will be displayed here -->
+        </div>
+        
+        <div class="actions">
+            <button class="btn btn-primary" id="refreshHistory">
+                <i class="fas fa-sync"></i> Refresh History
+            </button>
+            <button class="btn btn-secondary" id="clearHistory">
+                <i class="fas fa-trash"></i> Clear History
+            </button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWorkHistory();
+            
+            document.getElementById('refreshHistory').addEventListener('click', function() {
+                loadWorkHistory();
+                showNotification('History refreshed');
+            });
+            
+            document.getElementById('clearHistory').addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all work history? This action cannot be undone.')) {
+                    localStorage.removeItem('documentWorkHistory');
+                    loadWorkHistory();
+                    showNotification('History cleared successfully');
+                }
+            });
+        });
+        
+        function loadWorkHistory() {
+            const workHistory = JSON.parse(localStorage.getItem('documentWorkHistory')) || [];
+            const historyList = document.getElementById('workHistoryList');
+            
+            if (workHistory.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-file-download"></i>
+                        <h3>No work history yet</h3>
+                        <p>Your document processing activities will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            workHistory.forEach(item => {
+                let icon = '';
+                let actionText = '';
+                
+                switch (item.action) {
+                    case 'data_upload':
+                        icon = 'fa-file-upload';
+                        actionText = 'Data uploaded';
+                        break;
+                    case 'data_export':
+                        icon = 'fa-file-export';
+                        actionText = 'Data exported';
+                        break;
+                    case 'chart_download':
+                        icon = 'fa-chart-bar';
+                        actionText = 'Chart downloaded';
+                        break;
+                    default:
+                        icon = 'fa-download';
+                        actionText = 'File processed';
+                }
+                
+                const date = new Date(item.timestamp);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                
+                html += `
+                    <div class="history-item">
+                        <div class="history-icon">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <div class="history-content">
+                            <h4>${item.fileName}</h4>
+                            <p>${actionText} • ${item.fileType} • ${item.tool}</p>
+                        </div>
+                        <div class="history-time">${formattedDate}</div>
+                    </div>
+                `;
+            });
+            
+            historyList.innerHTML = html;
+        }
+        
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = isError ? 'notification error' : 'notification';
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

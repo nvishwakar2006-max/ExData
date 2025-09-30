@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doto Chatbot - ExData Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            color: white;
+        }
+        
+        .chat-header img {
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid white;
+        }
+        
+        .chat-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .message.bot {
+            align-self: flex-start;
+            background-color: #e9ecef;
+            color: #333;
+            border-bottom-left-radius: 2px;
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            background-color: #6e8efb;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        
+        .questions-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .question-btn {
+            background-color: #e9ecef;
+            border: none;
+            border-radius: 18px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #495057;
+        }
+        
+        .question-btn:hover {
+            background-color: #6e8efb;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 20px;
+            outline: none;
+            font-size: 1rem;
+        }
+        
+        .input-area input:focus {
+            border-color: #6e8efb;
+        }
+        
+        .input-area button {
+            margin-left: 10px;
+            background-color: #6e8efb;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .input-area button:hover {
+            background-color: #5a7df9;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 95vh;
+                border-radius: 8px;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+            
+            .questions-container {
+                flex-direction: column;
+            }
+            
+            .question-btn {
+                width: 100%;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="doto (1).jpg" alt="Doto" height="50" width="50">
+            <h1>Doto Chatbot</h1>
+        </div>
+        
+        <div class="chat-box" id="chatBox">
+            <div class="message bot">Welcome to ExData! How can I help you today?</div>
+            <div id="questions"></div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const qaPairs = [
+            { q: "How to connect my Amazon account?", a: "Go to 'Account Settings' → 'Add Platform' → Select Amazon → Login with your seller account." },
+            { q: "Can I download reports as Excel?", a: "Yes, go to 'Reports' → Select data type → Click 'Export as Excel'." },
+            { q: "How to create a sales dashboard?", a: "Navigate to 'Dashboard' → Click 'New Dashboard' → Select metrics and charts you want." },
+            { q: "Does ExData support Flipkart data?", a: "Yes, Flipkart integration is available under 'Add Platform'." },
+            { q: "How to check order cancellations?", a: "Go to 'Orders' → Apply filter 'Cancelled' to see cancellation details." },
+            { q: "Can I track shipping performance?", a: "Yes, view 'Shipping Analytics' under the analytics tab." },
+            { q: "Does ExData use AI for predictions?", a: "Yes, AI tools can forecast sales and trends based on past data." },
+            { q: "Is my data secure?", a: "Yes, all data is encrypted with enterprise-grade security." },
+            { q: "How to manage multiple accounts?", a: "Go to 'Account Settings' → 'Link Multiple Accounts' and follow instructions." },
+            { q: "Can I analyze Netflix user data?", a: "Yes, upload your Netflix analytics file and view insights." }
+        ];
+
+        let step = 1;
+
+        function displayQuestions() {
+            const questionContainer = document.getElementById("questions");
+            questionContainer.innerHTML = "";
+
+            // Create heading for suggested questions
+            const heading = document.createElement("p");
+            heading.textContent = "Suggested questions:";
+            heading.style.marginBottom = "10px";
+            heading.style.fontWeight = "500";
+            heading.style.color = "#495057";
+            questionContainer.appendChild(heading);
+
+            // Create container for question buttons
+            const buttonContainer = document.createElement("div");
+            buttonContainer.className = "questions-container";
+            
+            // Loop logic: after last step, reset to step 1
+            if (step > 4) {
+                step = 1;
+            }
+
+            let startIndex, endIndex;
+            
+            if (step === 1) {
+                startIndex = 0;
+                endIndex = 3;
+            } else if (step === 2) {
+                startIndex = 3;
+                endIndex = 6;
+            } else if (step === 3) {
+                startIndex = 6;
+                endIndex = 9;
+            } else if (step === 4) {
+                startIndex = 9;
+                endIndex = qaPairs.length;
+            }
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const btn = document.createElement("button");
+                btn.className = "question-btn";
+                btn.textContent = qaPairs[i].q;
+                btn.onclick = () => handleAnswer(i);
+                buttonContainer.appendChild(btn);
+            }
+            
+            questionContainer.appendChild(buttonContainer);
+            scrollToBottom();
+        }
+
+        function handleAnswer(index) {
+            const chatBox = document.getElementById("chatBox");
+
+            // Add user question
+            let userMsg = document.createElement("div");
+            userMsg.className = "message user";
+            userMsg.textContent = qaPairs[index].q;
+            chatBox.appendChild(userMsg);
+
+            // Add bot response after a short delay for natural feel
+            setTimeout(() => {
+                let botMsg = document.createElement("div");
+                botMsg.className = "message bot";
+                botMsg.textContent = qaPairs[index].a;
+                chatBox.appendChild(botMsg);
+                
+                step++;
+                displayQuestions();
+            }, 300);
+            
+            scrollToBottom();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("userInput");
+            const text = input.value.trim();
+            if (text === "") return;
+
+            const chatBox = document.getElementById("chatBox");
+            
+            // Add user message
+            let userMsg = document.createElement("div");
+            userMsg.className = "message user";
+            userMsg.textContent = text;
+            chatBox.appendChild(userMsg);
+
+            // Add bot response
+            setTimeout(() => {
+                let botMsg = document.createElement("div");
+                botMsg.className = "message bot";
+                
+                // Simple response logic - in a real app, you'd use NLP here
+                const lowerText = text.toLowerCase();
+                let response = "I'm not sure how to help with that. Try asking about connecting accounts, reports, or dashboards.";
+                
+                if (lowerText.includes("thank")) {
+                    response = "You're welcome! Is there anything else I can help with?";
+                } else if (lowerText.includes("hello") || lowerText.includes("hi")) {
+                    response = "Hello! How can I assist you with ExData today?";
+                }
+                
+                botMsg.textContent = response;
+                chatBox.appendChild(botMsg);
+                
+                scrollToBottom();
+            }, 500);
+
+            input.value = "";
+            scrollToBottom();
+        }
+        
+        function scrollToBottom() {
+            const chatBox = document.getElementById("chatBox");
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Initialize the chat
+        displayQuestions();
+        
+        // Allow sending message with Enter key
+        document.getElementById("userInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

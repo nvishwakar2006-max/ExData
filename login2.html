@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sign Up</title>
+<style>
+    body {
+    margin: 0;
+    padding: 0;
+    background-color: #1e1e1e;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #2e2e2e;
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    width: 350px;
+}
+
+.container h2 {
+    text-align: center;
+    color: #aefeff;
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #d9faff;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #1a1a1a;
+    border: 1px solid #aefeff;
+    border-radius: 6px;
+    color: #ffffff;
+}
+
+input::placeholder {
+    color: #aefeffb3;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+small {
+    display: block;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    color: #f0d678;
+}
+
+.terms {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #d9faff;
+}
+
+button, input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #aefeff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    color: #1e1e1e;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover,
+input[type="submit"]:hover {
+    background-color: #7ed4d4;
+}
+
+.error {
+    color: #ff6b6b;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    display: none;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Create Account</h2>
+    <form action="register.php" method="POST" id="registrationForm">
+        <label>Full Name</label>
+        <input type="text" name="full_name" placeholder="Name" required>
+        <div class="error" id="nameError"></div>
+
+        <label>Email</label>
+        <input type="email" name="email" placeholder="Email" required>
+        <div class="error" id="emailError"></div>
+
+        <label>Phone Number</label>
+        <input type="tel" name="phone" placeholder="Phone Number">
+        <div class="error" id="phoneError"></div>
+
+        <label>Set Password</label>
+        <input type="password" name="password" id="password" placeholder="Password" required minlength="6">
+        <div class="error" id="passwordError"></div>
+
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+        <div class="error" id="confirmError"></div>
+
+        <label class="terms">
+            <input type="checkbox" name="terms" required> I agree to the Terms and Conditions
+        </label>
+
+        <button type="submit" id="submitBtn">Create Account</button>
+    </form>
+    <div class="signup-prompt" style="text-align: center; margin-top: 20px; color: #d9faff;">
+        Already have an account? <a href="sign_in_page.html" style="color: #aefeff;">Sign in</a>
+    </div>
+</div>
+
+<script>
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Reset error messages
+    document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
+    
+    // Validate passwords match
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    
+    if (password !== confirmPassword) {
+        document.getElementById('confirmError').textContent = 'Passwords do not match';
+        document.getElementById('confirmError').style.display = 'block';
+        return;
+    }
+    
+    // If validation passes, submit the form
+    this.submit();
+});
+
+// Add real-time password confirmation validation
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (password !== confirmPassword) {
+        document.getElementById('confirmError').textContent = 'Passwords do not match';
+        document.getElementById('confirmError').style.display = 'block';
+    } else {
+        document.getElementById('confirmError').style.display = 'none';
+    }
+});
+</script>
+</body>
+</html>

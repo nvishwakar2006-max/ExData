@@ -1,0 +1,14 @@
+API key:
+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
+
+
+curl https://api.openai.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer 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" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "input": "write a haiku about ai",
+    "store": true
+  }'
+
+

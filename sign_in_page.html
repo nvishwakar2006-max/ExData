@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unify Your Business Data | ExData</title>
+  <style>
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #1e293b;
+    --accent: #8b5cf6;
+    --background: #0f172a;
+    --card-bg: #1e293b;
+    --text-light: #f1f5f9;
+    --text-muted: #94a3b8;
+    --success: #10b981;
+    --error: #ef4444;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--background);
+    color: var(--text-light);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    background-color: #1769dd;
+  }
+  
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(70, 62, 215, 0.2), transparent 30%),
+                radial-gradient(circle at bottom left, rgba(124, 80, 227, 0.15), transparent 30%);
+    z-index: -1;
+  }
+  
+  .container {
+    display: flex;
+    min-height: 100vh;
+    padding: 30px;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 40px;
+  }
+  
+  .left-panel {
+    flex: 1;
+    padding-right: 40px;
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  .logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 30px;
+    display: inline-block;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+  }
+  
+  .logo::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 3px;
+  }
+  
+  .left-panel h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    background: linear-gradient(90deg, #fff, #e2e8f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .left-panel p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+  
+  .left-panel ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 30px 0;
+  }
+  
+  .left-panel ul li {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    color: var(--text-light);
+    transition: transform 0.3s ease;
+  }
+  
+  .left-panel ul li:hover {
+    transform: translateX(5px);
+  }
+  
+  .left-panel ul li i {
+    color: var(--success);
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .trusted {
+    font-size: 0.9rem;
+    margin-top: 40px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  
+  .icon-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .icon-row .icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .icon-row .icon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .icon-row .icon img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+  
+  .right-panel {
+    flex: 1;
+    max-width: 420px;
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.8s ease-out;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .right-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+  
+  .social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+  
+  .social-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .social-button.google {
+    background-color: #4285F4;
+    color: white;
+  }
+  
+  .social-button.facebook {
+    background-color: #1877F2;
+    color: white;
+  }
+  
+  .social-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .divider {
+    text-align: center;
+    margin: 25px 0;
+    color: var(--text-muted);
+    position: relative;
+    font-size: 0.9rem;
+  }
+  
+  .divider::before,
+  .divider::after {
+    content: "";
+    display: inline-block;
+    height: 1px;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.4), transparent);
+    vertical-align: middle;
+    margin: 0 10px;
+  }
+  
+  form {
+    margin-top: 20px;
+  }
+  
+  .input-group {
+    position: relative;
+    margin-bottom: 25px;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 16px 20px 16px 45px;
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.6);
+    color: var(--text-light);
+    transition: all 0.3s ease;
+  }
+  
+  .input-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+  }
+  
+  .input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+  
+  .input-group input:focus + i {
+    color: var(--primary);
+  }
+  
+  .forgot {
+    color: var(--primary);
+    font-size: 0.9rem;
+    text-align: right;
+    display: block;
+    text-decoration: none;
+    margin-top: -15px;
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+  }
+  
+  .forgot:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  
+  .signin-button {
+    display: block;
+    text-align: center;
+    padding: 16px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .signin-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+  }
+  
+  .signup-prompt {
+    text-align: center;
+    margin-top: 25px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  
+  .signup-prompt a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .signup-prompt a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  
+  .chatbot-icon {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+  }
+  
+  .chatbot-icon:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+  }
+  
+  .chatbot-icon img {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1);
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 900px) {
+    .container {
+      flex-direction: column;
+      padding: 20px;
+    }
+    
+    .left-panel {
+      padding-right: 0;
+      text-align: center;
+      max-width: 600px;
+    }
+    
+    .left-panel ul li {
+      justify-content: center;
+    }
+    
+    .icon-row {
+      justify-content: center;
+    }
+    
+    .right-panel {
+      width: 100%;
+      max-width: 450px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .right-panel {
+      padding: 30px 20px;
+    }
+    
+    .left-panel h2 {
+      font-size: 2rem;
+    }
+  }
+  </style>
+
+  <script>
+    function validateForm(){
+      var email = document.forms["RegForm"]["emai"];
+      var password = document.forms["RegForm"]["pass"];
+
+      if(email.value == ""){
+        showError("Please Enter Your E-Mail");
+        email.focus();
+        return false;
+      }
+
+      if(email.value.indexOf("@",0) < 0 || email.value.indexOf(".",0) < 0){
+        showError("Please Enter a valid E-mail");
+        email.focus();
+        return false;
+      }
+
+      if(password.value == ""){
+        showError("Enter password");
+        password.focus();
+        return false;
+      }
+    
+      // If validation passes, redirect
+      window.location.href = "interface3.html";
+      return false; // prevent form from reloading
+    }
+    
+    function showError(message) {
+      // Create error notification
+      const errorDiv = document.createElement('div');
+      errorDiv.textContent = message;
+      errorDiv.style.position = 'fixed';
+      errorDiv.style.top = '20px';
+      errorDiv.style.right = '20px';
+      errorDiv.style.backgroundColor = '#ef4444';
+      errorDiv.style.color = 'white';
+      errorDiv.style.padding = '12px 20px';
+      errorDiv.style.borderRadius = '8px';
+      errorDiv.style.zIndex = '10000';
+      errorDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+      errorDiv.style.animation = 'fadeIn 0.3s ease-out';
+      
+      document.body.appendChild(errorDiv);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        errorDiv.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+          document.body.removeChild(errorDiv);
+        }, 300);
+      }, 3000);
+    }
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <div class="left-panel">
+    <div class="logo">ExData</div>
+    <h2>Unify Your Business Data</h2>
+    <p>Connect all your sales platforms in one place.<br>
+       Analyze trends, predict sales, and make data-driven decisions.
+    </p>
+    <ul>
+      <li><i class="fas fa-check-circle"></i> Secure data integration from 20+ platforms</li>
+      <li><i class="fas fa-check-circle"></i> AI-powered analytics & predictions</li>
+      <li><i class="fas fa-check-circle"></i> Enterprise-grade security</li>
+    </ul>
+    <p class="trusted">Trusted by 5,000+ businesses worldwide</p>
+    <div class="icon-row">
+      <div class="icon"><img src="amazon.jpg" alt="Amazon"></div>
+      <div class="icon"><img src="flipkart.jpg" alt="Flipkart"></div>
+      <div class="icon"><img src="meesho.jpg" alt="Meesho"></div>
+      <div class="icon"><img src="nykaa.jpg" alt="Nykaa"></div>
+      <div class="icon"><img src="netflix.jpg" alt="Netflix"></div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="social-buttons">
+      <button class="social-button google">
+        <i class="fab fa-google"></i> Continue with Google
+      </button>
+      <button class="social-button facebook">
+        <i class="fab fa-facebook-f"></i> Continue with Facebook
+      </button>
+    </div>
+    
+    <div class="divider"><span>or sign in with email</span></div>
+
+    <!-- Login Form -->
+    <form name="RegForm" onsubmit="return validateForm()">
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" placeholder="Business Email" name="emai">
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" placeholder="Password" name="pass">
+      </div>
+      
+      <a href="#" class="forgot">Forgot password?</a>
+      
+      <button type="submit" class="signin-button">Log In</button>
+    </form>
+    
+    <div class="signup-prompt">
+      Don't have an account? <a href="login2.html">Sign up</a>
+    </div>
+  </div>
+</div>
+
+<!-- Chatbot Floating Icon -->
+<div class="chatbot-icon">
+  <img src="doto (1).jpg" alt="Chatbot">
+</div>
+
+</body>
+</html>

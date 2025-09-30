@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExData Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #1e293b;
+      --accent: #8b5cf6;
+      --background: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --text-light: #f1f5f9;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--background);
+      color: var(--text-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      display: flex;
+      min-height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    /* Sidebar Styling */
+    .sidebar {
+      width: 260px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid var(--glass-border);
+      padding: 25px 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+    
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .logo i {
+      margin-right: 10px;
+      font-size: 32px;
+    }
+    
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--glass-border);
+      margin-bottom: 20px;
+    }
+    
+    .profile-pic {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-bottom: 15px;
+      border: 3px solid var(--primary);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+    }
+    
+    .profile-pic i {
+      font-size: 32px;
+      color: white;
+    }
+    
+    .profile-section h4 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    
+    .profile-section p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+    
+    .profile-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .profile-btn {
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .edit-btn {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+    }
+    
+    .share-btn {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--glass-border);
+    }
+    
+    .profile-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Navigation */
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      color: var(--text-light);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-size: 15px;
+    }
+    
+    .sidebar-menu a i {
+      margin-right: 12px;
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+    }
+    
+    .sidebar-menu a:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary);
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      padding: 30px;
+      background: rgba(15, 23, 42, 0.7);
+    }
+    
+    .welcome-section {
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease;
+    }
+    
+    .welcome-section h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #fff, #e2e8f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .welcome-section p {
+      color: var(--text-muted);
+      max-width: 600px;
+    }
+    
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
+    
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+    
+    .feature-img {
+      height: 180px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(45deg, #2b2f3a, #1a2332);
+    }
+    
+    .feature-img i {
+      font-size: 64px;
+      color: var(--primary);
+      opacity: 0.7;
+    }
+    
+    .feature-content {
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .feature-content h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .feature-content h3 i {
+      margin-right: 10px;
+      color: var(--primary);
+    }
+    
+    .feature-content p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+    
+    .feature-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-link i {
+      margin-left: 5px;
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-link:hover {
+      color: var(--accent);
+    }
+    
+    .feature-link:hover i {
+      transform: translateX(3px);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .feature-card {
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .feature-card:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+    
+    .feature-card:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+    
+    .feature-card:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px;
+        padding: 20px 10px;
+        align-items: center;
+      }
+      
+      .logo span {
+        display: none;
+      }
+      
+      .logo i {
+        margin-right: 0;
+        font-size: 28px;
+      }
+      
+      .profile-section h4, .profile-section p, .profile-buttons, .sidebar-menu a span {
+        display: none;
+      }
+      
+      .profile-pic {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .sidebar-menu a {
+        justify-content: center;
+        padding: 15px 10px;
+      }
+      
+      .sidebar-menu a i {
+        margin-right: 0;
+        font-size: 20px;
+      }
+      
+      .main-content {
+        margin-left: 80px;
+        padding: 20px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: row;
+        align-items: center;
+        padding: 15px 20px;
+      }
+      
+      .logo {
+        margin-bottom: 0;
+        margin-right: 20px;
+      }
+      
+      .profile-section {
+        flex-direction: row;
+        border-bottom: none;
+        margin-bottom: 0;
+        padding: 0;
+        margin-right: auto;
+      }
+      
+      .profile-pic {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0;
+        margin-right: 10px;
+      }
+      
+      .profile-info {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .profile-section h4, .profile-section p {
+        display: block;
+        margin-bottom: 0;
+        line-height: 1.3;
+      }
+      
+      .profile-buttons {
+        display: none;
+      }
+      
+      .sidebar-menu {
+        flex-direction: row;
+        gap: 5px;
+      }
+      
+      .sidebar-menu a {
+        padding: 10px 12px;
+      }
+      
+      .sidebar-menu a span {
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .sidebar {
+        padding: 10px 15px;
+      }
+      
+      .logo i {
+        font-size: 24px;
+      }
+      
+      .profile-section h4 {
+        font-size: 14px;
+      }
+      
+      .profile-section p {
+        display: none;
+      }
+      
+      .sidebar-menu a {
+        padding: 8px 10px;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <i class="fas fa-database"></i>
+      <span>ExData</span>
+    </div>
+
+   <!-- Inside interface3.html, update the profile section -->
+<div class="profile-section">
+    <div class="profile-pic">
+        <i class="fas fa-user"></i>
+    </div>
+    <h4 id="userEmail"><?php echo isset($_SESSION['user_email']) ? $_SESSION['user_email'] : 'user@gmail.com'; ?></h4>
+    <p id="userName"><?php echo isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'User Name'; ?></p>
+    <div class="profile-buttons">
+        <button class="profile-btn edit-btn">Edit Profile</button>
+        <button class="profile-btn share-btn">Share</button>
+    </div>
+</div>
+
+    <!-- Sidebar Menu -->
+    <nav class="sidebar-menu">
+      <a href="home.html">
+        <i class="fas fa-file-export"></i>
+        <span>Home</span>
+      </a>
+      <a href="work.html">
+        <i class="fas fa-chart-line"></i>
+        <span>Work History</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="welcome-section">
+      <h1>Welcome to ExData Dashboard</h1>
+      <p>Manage, analyze, and export your business data with powerful tools designed for efficiency.</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Clean & Export Data Card -->
+      <div class="feature-card">
+        <div class="feature-img">
+          <i class="fas fa-file-export"></i>
+        </div>
+        <div class="feature-content">
+          <h3><i class="fas fa-file-export"></i> Clean & Export Data</h3>
+          <p>Remove inconsistencies and export your data in various formats for further analysis and reporting.</p>
+          <a href="caedata4.html" class="feature-link">Access Tool <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <!-- Analyze Data Card -->
+      <div class="feature-card">
+        <div class="feature-img">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="feature-content">
+          <h3><i class="fas fa-chart-line"></i> Analyze Data</h3>
+          <p>Gain insights with powerful analytics tools, visualizations, and predictive algorithms.</p>
+          <a href="analyze5.html" class="feature-link">Access Tool <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <!-- More Features Card -->
+      <div class="feature-card">
+        <div class="feature-img">
+          <i class="fas fa-puzzle-piece"></i>
+        </div>
+        <div class="feature-content">
+          <h3><i class="fas fa-puzzle-piece"></i> More Features</h3>
+          <p>Discover additional tools and integrations to enhance your data management capabilities.</p>
+          <a href="add_fts6.html" class="feature-link">Explore Features <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <!-- Chatbot Card -->
+      <div class="feature-card">
+        <div class="feature-img">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="feature-content">
+          <h3><i class="fas fa-robot"></i> Doto - Chatbot</h3>
+          <p>Get instant help and answers to your data-related questions with our AI-powered assistant.</p>
+          <a href="chatbot7.html" class="feature-link">Chat Now <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
